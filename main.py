@@ -1,29 +1,34 @@
 import time
 
-def extractor(directory):
-    file = open(directory, "r")
-    content = file.read()
-    file.close()
-    list = content.split('\n')
-    return list
+def extractor(filename):
+    archive = open(filename, "r")
+    data = archive.read().split('\n')[:-1]
+    archive.close()
+    return data
 
-def program(D, n):
-    start = time.time() 
-    r=0
-    p=0
-    for x,y in enumerate(D):
-        if(y == n):
-            p=x
-            r = int(round(time.time() * 1000 - start))
-            break
-        else:
-            p=-1
-            r = int(round(time.time() * 1000 - start))
-    return str(p) +" "+str(r)
+def output(filename,found, position, time):
+    archive = open('resposta-'+filename+'.txt','w')
+    archive.write(found)
+    archive.write(position)
+    archive.write(time)
+    archive.close() 
 
-D = extractor('data/dataset-1-a.csv')
-output = open('result.csv', 'w')
-for i in range(3):
-    n = input('Digite o número que deseja encontrar:')
-    output.write(str(program(D, n)+ '\n'))
-output.close()
+
+def program(filename):
+    start = time.time()
+    content = extractor(filename+'.csv') 
+    n=content[0]
+    t=int(content[1])
+    D=content[2:]
+    for i in range(t):
+        if D[i] == n:
+            r=str(time.time() * 1000 - start)
+            output(filename, 'TRUE\n', str(i)+'\n', r)
+            return True
+    r=str(time.time() * 1000 - start)
+    output(filename, 'FALSE\n', '-1\n', r)
+    return False
+    
+program('dataset-1-a')
+program('dataset-1-b')
+program('dataset-1-c')
